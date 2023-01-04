@@ -1,8 +1,10 @@
+from django.contrib.auth import authenticate, login
 from django.db.models import Max, Min
 from django.http import JsonResponse
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 from django.template.loader import render_to_string
 
+from main.forms import SignupForm
 from main.models import Category, Brand, Product, ProductAttribute
 
 
@@ -27,6 +29,11 @@ def brand_list(request):
     return render(request, 'brand_list.html', {'data': data})
 
 
+# Cart
+def cart(request):
+    return render(request, 'cart.html')
+
+
 # # Product
 # def product_list(request):
 #     total_data = Product.objects.count()
@@ -46,28 +53,6 @@ def product_list(request):
                   {'data': data, 'cats': cats, 'brands': brands, 'colors': colors, 'sizes': sizes})
 
 
-# # Filter Data
-# def filter_data(request):
-#     colors = request.GET.getlist('color[]')
-#     categories = request.GET.getlist('category[]')
-#     brands = request.GET.getlist('brand[]')
-#     sizes = request.GET.getlist('size[]')
-#     minPrice = request.GET['minPrice']
-#     maxPrice = request.GET['maxPrice']
-#     allProducts = Product.objects.all().order_by('-id').distinct()
-#     allProducts = allProducts.filter(productattribute__price__gte=minPrice)
-#     allProducts = allProducts.filter(productattribute__price__lte=maxPrice)
-#     if len(colors) > 0:
-#         allProducts = allProducts.filter(productattribute__color__id__in=colors).distinct()
-#     if len(categories) > 0:
-#         allProducts = allProducts.filter(category__id__in=categories).distinct()
-#     if len(brands) > 0:
-#         allProducts = allProducts.filter(brand__id__in=brands).distinct()
-#     if len(sizes) > 0:
-#         allProducts = allProducts.filter(productattribute__size__id__in=sizes).distinct()
-#     t = render_to_string('ajax/product-list.html', {'data': allProducts})
-#     return JsonResponse({'data': t})
-
 # Product Detail
 def product_detail(request, slug, id):
     product = Product.objects.get(id=id)
@@ -81,26 +66,16 @@ def product_detail(request, slug, id):
                   {'data': product, 'related': related_products, 'colors': colors, 'sizes': sizes})
 
 
-# Add to cart
-def add_to_cart(request):
-    # del request.session['cartdata']
-    cart_p = {}
-    cart_p[str(request.GET['id'])] = {
-        'image': request.GET['image'],
-        'title': request.GET['title'],
-        'qty': request.GET['qty'],
-        'price': request.GET['price'],
-    }
-    if 'cartdata' in request.session:
-        if str(request.GET['id']) in request.session['cartdata']:
-            cart_data = request.session['cartdata']
-            cart_data[str(request.GET['id'])]['qty'] = int(cart_p[str(request.GET['id'])]['qty'])
-            cart_data.update(cart_data)
-            request.session['cartdata'] = cart_data
-        else:
-            cart_data = request.session['cartdata']
-            cart_data.update(cart_p)
-            request.session['cartdata'] = cart_data
-    else:
-        request.session['cartdata'] = cart_p
-    return JsonResponse({'data': request.session['cartdata'], 'totalitems': len(request.session['cartdata'])})
+# Signup Form
+def signup(request):
+    if request.method == 'POST':
+        form = SignupForm(request.POST)
+        if form.is_valid():
+            form.save()
+            username = form.cleaned_data.get('username')
+            pwd = form.cleaned_data.get('password1')
+            user = authenticate(username=username, password=pwd)
+            login(request, user)
+            return redirect('home')
+    form = SignupForm
+    return render(request, 'registration/signup.html', {'form': form})

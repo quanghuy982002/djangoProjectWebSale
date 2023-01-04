@@ -1,9 +1,12 @@
 from django.contrib import admin
-from .models import Category, Size, Color, Brand, Product, ProductAttribute
+from .models import *
 
 # Register your models here.
 
 admin.site.register(Size)
+
+admin.site.register(CartOrder)
+admin.site.register(CartOrderItems)
 
 class ColorAdmin(admin.ModelAdmin):
 	list_display=('title','color_bg')

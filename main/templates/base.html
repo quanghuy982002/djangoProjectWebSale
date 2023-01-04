@@ -35,10 +35,23 @@
                     <a class="nav-link text-white" href="{% url 'brand-list' %}">Thương hiệu</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link text-white" href="/cart.php"><i class="fa fa-shopping-cart"></i> Giỏ hàng (2)</a>
+                    <a class="nav-link text-white" href="{% url 'cart' %}"><i class="fa fa-shopping-cart"></i> Giỏ hàng
+                        (2)</a>
                 </li>
-                <li class="nav-item">
-                    <a class="nav-link text-white" href="/account.php"><i class="fa fa-user"></i>Tài khoản</a>
+                <li class="nav-item dropdown">
+                    <a class="nav-link text-white dropdown-toggle"  href="#" id="navbarDropdown" role="button"
+                       data-toggle="dropdown"
+                       aria-haspopup="true" aria-expanded="false">
+                        <i class="fa fa-user" ></i>Tài khoản
+                    </a>
+                    <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+                        {% if user.is_authenticated %}
+                            <a class="dropdown-item" href="{% url 'logout' %}">Logout</a>
+                        {% else %}
+                            <a class="dropdown-item" href="{% url 'login' %}">Login</a>
+                            <a class="dropdown-item" href="#">Đăng kí</a>
+                        {% endif %}
+                    </div>
                 </li>
             </ul>
         </div>
@@ -49,47 +62,13 @@
 {% endblock %}
 
 {#<footer class="main-footer">#}
-{#    <strong>Copyright &copy; {% now "Y" %}, <a>QUANG HUY</a>.</strong>#}
-{#    Công nghệ phần mềm.#}
-{#    <div class="float-right d-none d-sm-inline-block">#}
-{#        <b>Version</b> 1.0#}
-{#    </div>#}
+
 {#</footer>#}
 <footer class="pt-4 my-md-5 pt-md-5 border-top container">
-    <div class="row">
-        <div class="col-12 col-md">
-            <a href="#">Bottle Shop</a>
-            <small class="d-block mb-3 text-muted">&copy; 2017-2020</small>
-        </div>
-        <div class="col-6 col-md">
-            <h5>Features</h5>
-            <ul class="list-unstyled text-small">
-                <li><a class="text-muted" href="#">Cool stuff</a></li>
-                <li><a class="text-muted" href="#">Random feature</a></li>
-                <li><a class="text-muted" href="#">Team feature</a></li>
-                <li><a class="text-muted" href="#">Stuff for developers</a></li>
-                <li><a class="text-muted" href="#">Another one</a></li>
-                <li><a class="text-muted" href="#">Last time</a></li>
-            </ul>
-        </div>
-        <div class="col-6 col-md">
-            <h5>Resources</h5>
-            <ul class="list-unstyled text-small">
-                <li><a class="text-muted" href="#">Resource</a></li>
-                <li><a class="text-muted" href="#">Resource name</a></li>
-                <li><a class="text-muted" href="#">Another resource</a></li>
-                <li><a class="text-muted" href="#">Final resource</a></li>
-            </ul>
-        </div>
-        <div class="col-6 col-md">
-            <h5>About</h5>
-            <ul class="list-unstyled text-small">
-                <li><a class="text-muted" href="#">Team</a></li>
-                <li><a class="text-muted" href="#">Locations</a></li>
-                <li><a class="text-muted" href="#">Privacy</a></li>
-                <li><a class="text-muted" href="#">Terms</a></li>
-            </ul>
-        </div>
+    <strong>Copyright &copy; {% now "Y" %}, <a>QUANG HUY</a>.</strong>
+    Lập trình nâng cao.
+    <div class="float-right d-none d-sm-inline-block">
+        <b>Version</b> 1.0
     </div>
 </footer>
 </body>
