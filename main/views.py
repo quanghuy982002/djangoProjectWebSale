@@ -76,6 +76,31 @@ def product_detail(request, slug, id):
                                                                      'color__color_code').distinct()
     sizes = ProductAttribute.objects.filter(product=product).values('size__id', 'size__title', 'price',
                                                                     'color__id').distinct()
-    # reviewForm = ReviewAdd()
 
-    return render(request, 'product_detail.html', {'data' : product})
+    return render(request, 'product_detail.html',
+                  {'data': product, 'related': related_products, 'colors': colors, 'sizes': sizes})
+
+
+# Add to cart
+def add_to_cart(request):
+    # del request.session['cartdata']
+    cart_p = {}
+    cart_p[str(request.GET['id'])] = {
+        'image': request.GET['image'],
+        'title': request.GET['title'],
+        'qty': request.GET['qty'],
+        'price': request.GET['price'],
+    }
+    if 'cartdata' in request.session:
+        if str(request.GET['id']) in request.session['cartdata']:
+            cart_data = request.session['cartdata']
+            cart_data[str(request.GET['id'])]['qty'] = int(cart_p[str(request.GET['id'])]['qty'])
+            cart_data.update(cart_data)
+            request.session['cartdata'] = cart_data
+        else:
+            cart_data = request.session['cartdata']
+            cart_data.update(cart_p)
+            request.session['cartdata'] = cart_data
+    else:
+        request.session['cartdata'] = cart_p
+    return JsonResponse({'data': request.session['cartdata'], 'totalitems': len(request.session['cartdata'])})
